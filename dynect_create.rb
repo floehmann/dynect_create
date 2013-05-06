@@ -24,12 +24,13 @@ DYNECT_ZONE = ENV['DYNECT_ZONE'] || 'example.com'
 
 # These are required
 ip = opts[:ip]
+ip6 = opts[:ip6]
 host = opts[:host].downcase
-
-# Fix these checks and add them for valid ipv4/ipv6 addresses
 
 # Add check for valid number
 rrttl = opts[:rrttl].to_s
+
+# Fix these checks and add them for valid ipv4/ipv6 addresses
 
 # Make sure host is fully qualified
 if ( host =~ /#{DYNECT_ZONE}/i )
@@ -48,13 +49,6 @@ else
   cname = ''
 end
 
-# Check if ip6 was set
-if not opts[:ip6].empty? and not opts[:ip6].nil?
-  ip6 = opts.ip6
-else 
-  ip6 = ''
-end
-
 ## Set up session
 dyn = DynectRest.new(DYNECT_CUST, DYNECT_USER, DYNECT_PASS, DYNECT_ZONE, true)
 
@@ -63,19 +57,12 @@ if not ip.empty? and not fullhost.empty?
   begin 
     a_rec = dyn.a.get(fullhost)
     a_addr = a_rec.rdata['address']
-    #puts "#{fullhost} = #{a_addr}"
+    puts "Updating A record #{fullhost} -> #{ip} to #{a_addr}"
+    dyn.a.fqdn(fullhost).ttl(rrttl).address(ip).save(true)
   rescue DynectRest::Exceptions::RequestFailed
-    a_addr = ''
-    #puts "#{fullhost} A record not found"
+    puts "Adding A record #{fullhost} -> #{ip}"
+    dyn.a.fqdn(fullhost).ttl(rrttl).address(ip).save(false)
   end
-end
-
-if not a_addr.empty? and not a_addr.nil?
-  puts "Updating A record #{fullhost} -> #{ip} to #{a_addr}"
-  dyn.a.fqdn(fullhost).ttl(rrttl).address(ip).save(true)
-else
-  puts "Adding A record #{fullhost} -> #{ip}"
-  dyn.a.fqdn(fullhost).ttl(rrttl).address(ip).save(false)
 end
 
 ## Create or Update an AAAA Record for the given host
@@ -83,19 +70,12 @@ if not ip6.empty? and not ip6.nil?
   begin 
     aaaa_rec = dyn.aaaa.get(fullhost)
     aaaa_addr = aaaa_rec.rdata['address']
-    #puts "#{fullhost} = #{aaaa_addr}"
+    puts "Updating AAAA record #{fullhost} -> #{ip6} to #{aaaa_addr}"
+    dyn.aaaa.fqdn(fullhost).ttl(rrttl).address(ip6).save(true)
   rescue DynectRest::Exceptions::RequestFailed
-    aaaa_addr = ''
-    #puts "#{fullhost} AAAA record not found"
+    puts "Adding AAAA record #{fullhost} -> #{ip6}"
+    dyn.aaaa.fqdn(fullhost).ttl(rrttl).address(ip6).save(false)
   end
-end
-
-if not aaaa_addr.empty? and not aaaa_addr.nil?
-  puts "Updating AAAA record #{fullhost} -> #{ip6} to #{aaaa_addr}"
-  dyn.aaaa.fqdn(fullhost).ttl(rrttl).address(ip6).save(true)
-else
-  puts "Adding AAAA record #{fullhost} -> #{ip6}"
-  dyn.aaaa.fqdn(fullhost).ttl(rrttl).address(ip6).save(false)
 end
 
 ## Create a new CNAME record
@@ -106,13 +86,9 @@ if not cname.empty? and not cname.nil?
     cname_target = cname_rec.rdata['cname']
     puts "WARN: CNAME exists #{cname_fqdn} -> #{cname_target} ...  Not adding."
   rescue DynectRest::Exceptions::RequestFailed
-    cname_target = ''
-  end
-end
-
-if cname_target.empty? or cname_target.nil?
     puts "Adding CNAME #{cname} -> #{fullhost}"
     dyn.cname.fqdn(cname).ttl(rrttl).cname(fullhost).save
+  end
 end
 
 ## Publish zone
