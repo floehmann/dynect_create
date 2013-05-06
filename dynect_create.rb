@@ -24,8 +24,10 @@ DYNECT_ZONE = ENV['DYNECT_ZONE'] || 'example.com'
 
 # These are required
 ip = opts[:ip]
-ip6 = opts[:ip6]
 host = opts[:host].downcase
+
+# Someday required... 
+ip6 = opts[:ip6]
 
 # Add check for valid number
 rrttl = opts[:rrttl].to_s
