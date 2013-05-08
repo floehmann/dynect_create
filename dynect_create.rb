@@ -42,7 +42,7 @@ else
 end
 
 # Check CNAME is fully qualified
-if not opts[:cname].empty? and not opts[:cname].nil?
+if not (opts[:cname].empty? and opts[:cname].nil?)
   cname = opts.cname.downcase
   if not cname =~ /.*\..*/i
       abort("Error: CNAME must be fully qualified.")
