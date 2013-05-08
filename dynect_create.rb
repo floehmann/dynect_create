@@ -55,7 +55,7 @@ end
 dyn = DynectRest.new(DYNECT_CUST, DYNECT_USER, DYNECT_PASS, DYNECT_ZONE, true)
 
 ## Create or Update an A Record for the given host
-if not ip.empty? and not fullhost.empty?
+if not (ip.empty? and fullhost.empty?)
   begin 
     a_rec = dyn.a.get(fullhost)
     a_addr = a_rec.rdata['address']
@@ -68,7 +68,7 @@ if not ip.empty? and not fullhost.empty?
 end
 
 ## Create or Update an AAAA Record for the given host
-if not ip6.empty? and not ip6.nil?
+if not (ip6.empty? and ip6.nil?)
   begin 
     aaaa_rec = dyn.aaaa.get(fullhost)
     aaaa_addr = aaaa_rec.rdata['address']
@@ -81,7 +81,7 @@ if not ip6.empty? and not ip6.nil?
 end
 
 ## Create a new CNAME record
-if not cname.empty? and not cname.nil?
+if not (cname.empty? and cname.nil?)
   begin 
     cname_rec = dyn.cname.get(cname)
     cname_fqdn = cname_rec.fqdn
