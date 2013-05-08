@@ -54,6 +54,9 @@ end
 ## Set up session
 dyn = DynectRest.new(DYNECT_CUST, DYNECT_USER, DYNECT_PASS, DYNECT_ZONE, true)
 
+## If an A or AAAA record exists update it with PUT
+## Otherwise add it with POST
+
 ## Create or Update an A Record for the given host
 if not (ip.empty? and fullhost.empty?)
   begin 
