@@ -6,5 +6,5 @@ very handy dynect_rest api.
 
 https://github.com/adamhjk/dynect_rest
 
-To Do: Add bundler
+To Do: Add bundler and make this a gem.
 
